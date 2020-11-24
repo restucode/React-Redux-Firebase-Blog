@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { useFirebase } from 'react-redux-firebase';
-
+import { useFirebase, useFirestore } from 'react-redux-firebase';
 
 const Register = () => {
 
     const history = useHistory()
     const firebase = useFirebase()
+    const firestore = useFirestore()
+    const [ nama, setNama ] = useState('')
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ konfirmasiPassword, setKonfirmasiPassword ] = useState('')
-    const [ loading, setloading ] = useState(false)
+    const [ loading ] = useState(false)
     const [ error, setError ] = useState('')
+
 
     const handleSubmit = async (e) => {
       e.preventDefault()
@@ -19,9 +21,14 @@ const Register = () => {
         return setError('Password Tidak Sesuai')
       }
 
-      await firebase.auth().createUserWithEmailAndPassword(email, password).then((res) => {
-        setloading(true)
-        return history.push('/login')
+      
+
+      await firebase.auth().createUserWithEmailAndPassword(email, password).then((user) => {
+       firebase.auth().currentUser.updateProfile({
+         displayName: nama
+       }).then(() => {
+         return history.push('/login')
+       })
       }).catch(err => {
         setError(err.message)
         setEmail('')
@@ -44,6 +51,12 @@ const Register = () => {
                   </div>
                 )}
                 <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                      <label>Nama Lengkap</label>
+                      <input type="text" className="form-control" value={nama}
+                        onChange={(e) => setNama(e.target.value)} required 
+                      />
+                  </div>
                   <div className="form-group">
                       <label>Email address</label>
                       <input type="email" className="form-control" value={email}

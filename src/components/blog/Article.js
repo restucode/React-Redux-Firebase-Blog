@@ -1,27 +1,70 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import Navbar from '../layout/Navbar'
+import { useFirestore } from 'react-redux-firebase'
+import { tanggalIndonesia } from './../../config/tanggalIndonesia'
+import parse from 'html-react-parser'
+import Loading from '../layout/Loading'
 
 const Article = () => {
+    const firestore = useFirestore()
+    const [ article, setArticle ] = useState({
+        penulis : '',
+        judul:'',
+        url: '',
+        konten: '',
+        status : false,
+        kategori : [],
+    })
+    const { id } = useParams()
+    const docRef = firestore.collection('Articles')
+    const tanggalArtikel = article.createdAt && article.createdAt.toDate()
+
+    useEffect(() => {
+     loadArticle()
+    }, [id])
+
+    const loadArticle =  async () => {
+        try {
+            docRef
+            .get()
+            .then((snapshot) => {
+                const data = snapshot.docs.map((doc) => ({
+                ...doc.data(),
+                }));
+                const dataBaru = data.find(tes => tes.url == id)
+                setArticle(dataBaru)
+            });
+        } catch(err) { 
+            console.log('Gagal Mengambil Artikel !', err)
+        }
+    }
+
+    
+
     return (
         <>
         <Navbar />
+        
         <hr/>
-        <div className="row mt-3 ">
+        <div className="row mt-3">
             <div className="col-md-8 offset-md-2">
-                <h1 className='h2 pb-3'>3 Cara Menghapus File/Folder Tidak Bisa Dihapus (Laptop/PC)</h1>
+                <h1 className='h2 pb-3'>{article.judul}</h1>
                 <div className='d-flex flex-column pb-3'>
-                    <span><span className='text-black-50 pr-1'>Dipublikasikan Oleh</span>Restu Kersana</span>
-                    <span>17 November 2020</span>
+                    <span><span className='text-black-50 pr-1'>Dipublikasikan Oleh</span>{ article.penulis }</span>
+                    <span>{ tanggalIndonesia(tanggalArtikel) }</span>
                     <div className='pt-1'>
-                        <Link className='badge badge-dark mr-1' to=''>Anime</Link>
-                        <Link className='badge badge-dark mr-1' to=''>Anime</Link>
-                        <Link className='badge badge-dark mr-1' to=''>Anime</Link>
+                    {
+                     article.kategori.map((kategori, index) => (
+                        <span className='badge badge-dark mr-1' key={index}>{ kategori.label }</span>
+                     ))
+                    }
                     </div>
                 </div>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam, cupiditate autem. Alias optio ad eos quam dolorem odit aperiam quos aspernatur non corrupti fugit beatae aut possimus totam vitae tempora exercitationem, recusandae in quasi ea veniam vel voluptatem voluptates. Repellendus dignissimos, vitae ipsum minus reiciendis ducimus, praesentium fugit officia pariatur dicta rerum expedita. Voluptates et impedit voluptatum nam accusamus excepturi, quas rerum laborum cupiditate necessitatibus quisquam repudiandae reiciendis modi dolorum architecto consectetur dolores, assumenda, odit provident explicabo ipsa alias consequatur facere! Officia minima, numquam eos architecto consequatur facilis rem fugit ipsa quas nihil neque pariatur natus eaque, ad inventore exercitationem.</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam, cupiditate autem. Alias optio ad eos quam dolorem odit aperiam quos aspernatur non corrupti fugit beatae aut possimus totam vitae tempora exercitationem, recusandae in quasi ea veniam vel voluptatem voluptates. Repellendus dignissimos, vitae ipsum minus reiciendis ducimus, praesentium fugit officia pariatur dicta rerum expedita. Voluptates et impedit voluptatum nam accusamus excepturi, quas rerum laborum cupiditate necessitatibus quisquam repudiandae reiciendis modi dolorum architecto consectetur dolores, assumenda, odit provident explicabo ipsa alias consequatur facere! Officia minima, numquam eos architecto consequatur facilis rem fugit ipsa quas nihil neque pariatur natus eaque, ad inventore exercitationem.</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam, cupiditate autem. Alias optio ad eos quam dolorem odit aperiam quos aspernatur non corrupti fugit beatae aut possimus totam vitae tempora exercitationem, recusandae in quasi ea veniam vel voluptatem voluptates. Repellendus dignissimos, vitae ipsum minus reiciendis ducimus, praesentium fugit officia pariatur dicta rerum expedita. Voluptates et impedit voluptatum nam accusamus excepturi, quas rerum laborum cupiditate necessitatibus quisquam repudiandae reiciendis modi dolorum architecto consectetur dolores, assumenda, odit provident explicabo ipsa alias consequatur facere! Officia minima, numquam eos architecto consequatur facilis rem fugit ipsa quas nihil neque pariatur natus eaque, ad inventore exercitationem.</p>
+                <div className='articleku'>
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae vel architecto mollitia delectus rerum ad enim tenetur illum sint dolores voluptatem illo reprehenderit quidem animi eveniet voluptates, sapiente perferendis aspernatur? Quod ratione natus modi adipisci aliquid perspiciatis velit tenetur quo dicta minima vel quas, quae nam qui magni dolorem voluptate nulla! Necessitatibus sint optio autem fuga possimus suscipit maiores debitis at. Ipsa nihil enim mollitia totam ea repudiandae illo quibusdam molestiae ipsum earum iure dolor odio saepe optio facere deserunt voluptatum temporibus fuga, nam culpa? Illum, placeat cupiditate. Facere, eaque molestiae cupiditate consequatur explicabo minima nisi commodi dolor debitis ipsum.</p>
+                {parse(article.konten)}
+                </div>
             </div>
         </div>
         </>

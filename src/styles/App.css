@@ -2,3 +2,8 @@
   min-height: 500px;
   margin-bottom: 10px;
 }
+
+.articleku {
+  box-sizing: content-box;
+  word-wrap: break-word;
+}

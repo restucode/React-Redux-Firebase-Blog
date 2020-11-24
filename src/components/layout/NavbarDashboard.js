@@ -15,7 +15,7 @@ const NavbarDashboard = () => {
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div className="navbar-nav">
                 <NavLink className="nav-link" to="/dashboard/profile">Profile</NavLink>
-                <NavLink className="nav-link" to=''  onClick={() => firebase.logout()}>Logout</NavLink>
+                <NavLink className="nav-link" to='/login'  onClick={() => firebase.logout()}>Logout</NavLink>
                 </div>
             </div>
         </nav>

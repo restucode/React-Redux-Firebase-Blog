@@ -1,10 +1,15 @@
 import React from 'react'
+import NavbarDashboard from '../layout/NavbarDashboard'
 
 const Profile = () => {
     return (
-        <div className='container'>
-            Hallo Profile
-        </div>
+        <>
+            <NavbarDashboard />
+            <div className='container'>
+                Hallo Profileasfsafa
+            </div>
+        </>
+       
     )
 }
 
