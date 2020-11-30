@@ -54,25 +54,29 @@ const Register = () => {
                   <div className="form-group">
                       <label>Nama Lengkap</label>
                       <input type="text" className="form-control" value={nama}
-                        onChange={(e) => setNama(e.target.value)} required 
+                        onChange={(e) => setNama(e.target.value)}
+                        required autoComplete='off' 
                       />
                   </div>
                   <div className="form-group">
                       <label>Email address</label>
                       <input type="email" className="form-control" value={email}
-                        onChange={(e) => setEmail(e.target.value)} required 
+                        onChange={(e) => setEmail(e.target.value)} required
+                        required autoComplete='off' 
                       />
                   </div>
                   <div className="form-group">
                       <label>Password</label>
                       <input type="password" className="form-control" value={password}
-                         onChange={(e) => setPassword(e.target.value)} required 
+                         onChange={(e) => setPassword(e.target.value)} required
+                         required autoComplete='off' 
                       />
                   </div>
                   <div className="form-group">
                       <label>Konfirmasi Password</label>
                       <input type="password" className="form-control" value={konfirmasiPassword}
-                        onChange={(e) => setKonfirmasiPassword(e.target.value)} required 
+                        onChange={(e) => setKonfirmasiPassword(e.target.value)} required
+                        required autoComplete='off'  
                       />
                   </div>
                   <Link className='d-block my-3' to='forgot-pass'>Lupa Password ?</Link>
@@ -84,6 +88,7 @@ const Register = () => {
             </div>
         </div>
     </div>
+
     )
 }
 

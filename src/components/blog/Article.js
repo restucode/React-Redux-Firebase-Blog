@@ -1,47 +1,51 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React from 'react'
+import { useParams } from 'react-router-dom'
 import Navbar from '../layout/Navbar'
-import { useFirestore } from 'react-redux-firebase'
 import { tanggalIndonesia } from './../../config/tanggalIndonesia'
 import parse from 'html-react-parser'
-import Loading from '../layout/Loading'
+import { useSelector } from 'react-redux';
+import Loading from './../layout/Loading';
+import {  useFirestoreConnect } from 'react-redux-firebase';
+
 
 const Article = () => {
-    const firestore = useFirestore()
-    const [ article, setArticle ] = useState({
-        penulis : '',
-        judul:'',
-        url: '',
-        konten: '',
-        status : false,
-        kategori : [],
-    })
-    const { id } = useParams()
-    const docRef = firestore.collection('Articles')
-    const tanggalArtikel = article.createdAt && article.createdAt.toDate()
+    //  Versi Callback 
+    // const loadArticle = useCallback(() => {
+    //     try {
+    //         docRef
+    //         .get()
+    //         .then((snapshot) => {
+    //             const data = snapshot.docs.map((doc) => ({
+    //             ...doc.data(),  
+    //             }));
+    //             const dataBaru = data.find(tes => tes.url === url)
+    //             setArticle(dataBaru)
+    //         });
+    //     } catch(err) { 
+    //         console.log('Gagal Mengambil Artikel !', err)
+    //     }
+    // }, [docRef, url])
 
-    useEffect(() => {
-     loadArticle()
-    }, [id])
+    // useEffect(() => {
+    //     loadArticle()
 
-    const loadArticle =  async () => {
-        try {
-            docRef
-            .get()
-            .then((snapshot) => {
-                const data = snapshot.docs.map((doc) => ({
-                ...doc.data(),
-                }));
-                const dataBaru = data.find(tes => tes.url == id)
-                setArticle(dataBaru)
-            });
-        } catch(err) { 
-            console.log('Gagal Mengambil Artikel !', err)
-        }
+    //     return () => loadArticle()
+        
+    //    }, [url,loadArticle])
+
+    // pake useselector
+    const { url } = useParams() 
+    const articles = useSelector((state) => state.firestore.ordered.Articles)
+    useFirestoreConnect([
+        { collection: "Articles", orderBy: ["createdAt", "desc"] },
+    ]);
+    if (!articles) {
+        return <Loading />
     }
 
-    
-
+    const article = articles.find(article => article.url === url)
+    const tanggalArtikel = article.createdAt && article.createdAt.toDate()
+ 
     return (
         <>
         <Navbar />
@@ -51,7 +55,7 @@ const Article = () => {
             <div className="col-md-8 offset-md-2">
                 <h1 className='h2 pb-3'>{article.judul}</h1>
                 <div className='d-flex flex-column pb-3'>
-                    <span><span className='text-black-50 pr-1'>Dipublikasikan Oleh</span>{ article.penulis }</span>
+                    <span><span className='text-black-50 pr-1'>{`${article.penulis && 'Dipublikasikan Oleh'}`}</span>{ article.penulis }</span>
                     <span>{ tanggalIndonesia(tanggalArtikel) }</span>
                     <div className='pt-1'>
                     {
@@ -62,7 +66,6 @@ const Article = () => {
                     </div>
                 </div>
                 <div className='articleku'>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae vel architecto mollitia delectus rerum ad enim tenetur illum sint dolores voluptatem illo reprehenderit quidem animi eveniet voluptates, sapiente perferendis aspernatur? Quod ratione natus modi adipisci aliquid perspiciatis velit tenetur quo dicta minima vel quas, quae nam qui magni dolorem voluptate nulla! Necessitatibus sint optio autem fuga possimus suscipit maiores debitis at. Ipsa nihil enim mollitia totam ea repudiandae illo quibusdam molestiae ipsum earum iure dolor odio saepe optio facere deserunt voluptatum temporibus fuga, nam culpa? Illum, placeat cupiditate. Facere, eaque molestiae cupiditate consequatur explicabo minima nisi commodi dolor debitis ipsum.</p>
                 {parse(article.konten)}
                 </div>
             </div>

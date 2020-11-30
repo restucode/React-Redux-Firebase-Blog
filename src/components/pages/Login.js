@@ -32,13 +32,17 @@ const Login = () => {
                     <div className="form-group">
                         <label>Email address</label>
                         <input type="email" className="form-control" name='email'
-                          onChange={onInputChange} value={user.email}  
+                          onChange={onInputChange} value={user.email}
+                          required
+                          autoComplete='off'
                         />
                     </div>
                     <div className="form-group">
                         <label>Password</label>
                         <input type="password" className="form-control" name='password'
-                         onChange={onInputChange} value={user.password} 
+                         onChange={onInputChange} value={user.password}
+                         required
+                         autoComplete='off'
                          />
                     </div>
                     <Link className='d-block my-3' to='forgot-pass'>Lupa Password ?</Link>

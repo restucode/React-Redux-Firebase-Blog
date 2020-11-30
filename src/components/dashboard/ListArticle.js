@@ -11,16 +11,17 @@ import { useFirestore } from 'react-redux-firebase'
 
 const ListArticle = () => {
     const firestore = useFirestore()
-    const articles = useSelector((state) => state.firestore.ordered.Articles)
     
     useFirestoreConnect([
         { collection: "Articles", orderBy: ["createdAt", "desc"] },
     ]);
-
+    
+    const articles = useSelector((state) => state.firestore.ordered.Articles)
     
     if (!articles) {
         return <Loading />
     }
+    
 
     const handleDelete =  (id) => {
     confirmAlert({
@@ -28,14 +29,14 @@ const ListArticle = () => {
         message: 'Apakah Kamu Yakin Ingin Menghapus ?',
         buttons: [
             {
-            label: 'Ya',
-            onClick: async () => {
-             try{
-                await firestore.collection("Articles").doc(id).delete();
-             } catch(err) {
-                console.error("Dokumen Gagal Dihapus ", err);
-             }
-            }
+               label: 'Ya',
+               onClick: async () => {
+                try{
+                    await firestore.collection("Articles").doc(id).delete();
+                } catch(err) {
+                    console.error("Dokumen Gagal Dihapus ", err);
+                }
+               }
             },
             {
             label: 'Tidak',
@@ -61,7 +62,7 @@ const ListArticle = () => {
                                 { article.status ? 'Dipublikasikan' : 'Ditunda' }
                             </span>
                             <span className={`badge badge-light mt-1 mr-1`}>
-                            {tanggalIndonesia(article.createdAt.toDate())}
+                            {tanggalIndonesia(article.createdAt && article.createdAt.toDate())}
                             
                             </span>
                         </div>

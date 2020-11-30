@@ -4,9 +4,11 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import NavbarDashboard from '../layout/NavbarDashboard';
 import CreatableSelect from 'react-select/creatable'
 import { useParams, useHistory } from 'react-router-dom';
-import { useFirestore } from 'react-redux-firebase';
+import { useFirestore, useFirestoreConnect } from 'react-redux-firebase';
 import { Formik } from 'formik'
 import * as yup from 'yup'
+import { useSelector } from 'react-redux';
+import Loading from './../layout/Loading';
 
 
 
@@ -27,6 +29,10 @@ const EditArticle = () => {
     const history = useHistory()
     const { id } = useParams()
     const docRef = firestore.collection('Articles').doc(id)
+    useFirestoreConnect([
+      { collection: "Category", orderBy: ["kategori", "desc"] },
+    ]);
+    const category = useSelector((state) => state.firestore.ordered.Category)
 
     useEffect(() => {
       if (id) {
@@ -61,6 +67,10 @@ const EditArticle = () => {
           .required('URL Tidak Boleh Kosong !')
           .matches(/^[a-z-A-Z-0-9\s]+$/, 'URL Hanya Boleh Huruf dan Angka !'),
     })
+
+    if(!category) return <Loading />
+
+   
 
     return (
         <>
@@ -143,7 +153,7 @@ const EditArticle = () => {
                         <CreatableSelect
                             isMulti
                             onChange={handleCategory}
-                            options={kategori}
+                            options={category[0].kategori}
                             value={kategori}
                         />
                       </div>
